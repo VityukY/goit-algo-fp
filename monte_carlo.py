@@ -47,26 +47,26 @@ def monte_carlo_simulation(num_experiments):
 # Кількість експериментів
 num_experiments = 100
 mc_chanse = monte_carlo_simulation(num_experiments)
-
-# Заголовок таблички
-header = ["Drops", "Chances"]
-
-# Виведення заголовка
-print(f"{header[0]:^10}|{header[1]:^10}")
-print("-" * 21)
-
-# Виведення даних
-for key, value in default_values.items():
-    print(f"{key:^10}|{value:^10}")
-
-# Виведення лінії
-print("-" * 21)
-
-
 sum = 0
 for chance in mc_chanse:
     sum += round(abs(mc_chanse[chance] - default_values[chance]), 3)
 
-print(
-    f"Загальна сума відміності дефолтних значеннях ймовірностей і ймовірностей отриманих методом монтекарло дорівнює: {sum}%"
-)
+with open("readme.md", "w", encoding="utf-8") as fp:
+
+    # Заголовок таблички
+    header = ["Drops", "Chances"]
+
+    # Виведення заголовка
+    fp.writelines(f"{header[0]:^10}|{header[1]:^10}\n")
+    fp.writelines("-" * 21 + "\n")
+
+    # Виведення даних
+    for key, value in default_values.items():
+        fp.writelines(f"{key:^10}|{value:^10}\n")
+
+    # Виведення лінії
+    fp.writelines("-" * 21 + "\n")
+
+    fp.writelines(
+        f"Загальна сума відміності дефолтних значеннях ймовірностей і ймовірностей отриманих методом монтекарло дорівнює: {sum}%"
+    )
