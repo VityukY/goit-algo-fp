@@ -22,9 +22,11 @@ def greedy_algo(items, budget):
     for food, data in ranked_food.items():
 
         if budget >= data["cost"]:
-            dishes = budget // data["cost"]
-            dish_list.append({food: dishes})
-            budget -= data["cost"] * dishes
+
+            # dishes = budget // data["cost"]
+            # dishes = ranked_food.pop(food)
+            dish_list.append(food)
+            budget -= data["cost"]
 
     if not dish_list:
         return "Треба більше золота."
@@ -36,10 +38,20 @@ greedy_result = greedy_algo(items, 150)
 print(f"Greedy result: {greedy_result}")
 
 
+items = {
+    "pizza": {"cost": 50, "calories": 300},
+    "hamburger": {"cost": 40, "calories": 250},
+    "hot-dog": {"cost": 30, "calories": 200},
+    "pepsi": {"cost": 10, "calories": 100},
+    "cola": {"cost": 15, "calories": 220},
+    "potato": {"cost": 25, "calories": 350},
+}
+
+
 def dynamic_programming(items, budget):
     n = len(items)
     dp = [0] * (budget + 1)
-    choices = [{} for _ in range(budget + 1)]
+    choices = [set() for _ in range(budget + 1)]
 
     for i in range(1, budget + 1):
         for j in range(n):
@@ -47,19 +59,14 @@ def dynamic_programming(items, budget):
             cost = items[item]["cost"]
             calories = items[item]["calories"]
 
-            if cost <= i and dp[i - cost] + calories > dp[i]:
+            if cost <= i and dp[i - cost] + calories > dp[i] and item not in choices[i]:
                 dp[i] = dp[i - cost] + calories
-                choices[i] = {
-                    **choices[i - cost],
-                    **{item: choices[i - cost].get(item, 0) + 1},
-                }
+                choices[i] = set(choices[i - cost])
+                choices[i].add(item)
 
-    result = {}
-    for item, count in choices[budget].items():
-        if count > 0:
-            result[item] = count
-
-    return result
+    return (
+        choices[budget] if choices[budget] else set()
+    )  # Повертає порожню множину, якщо не вдалося знайти жоден продукт
 
 
 # Виклик функції та виведення результату

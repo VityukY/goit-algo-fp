@@ -25,6 +25,9 @@ def main():
     my_turtle.goto(0, -200)
     my_turtle.pendown()
 
+    # Встановлюємо початковий напрямок на 90 градусів проти годинникової стрілки
+    my_turtle.left(90)
+
     # Викликаємо функцію для малювання дерева Піфагора з вказаним рівнем рекурсії
     draw_pifagor_tree(my_turtle, 100, recursion_level)
 
