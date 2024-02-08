@@ -1,7 +1,8 @@
 class Node:
-    def __init__(self, data=None):
+    def __init__(self, data=None, sorted=False):
         self.data = data
         self.next = None
+        self.sorted = sorted
 
 
 class LinkedList:
@@ -54,115 +55,97 @@ class LinkedList:
             cur = cur.next
         return None
 
-    def print_list(self):
+    def insertion_sort(self):
+        if self.head is None or self.head.next is None:
+            return
+
+        sorted_head = None
+        unsorted_head = self.head
+        while unsorted_head:
+            current = unsorted_head
+            unsorted_head = unsorted_head.next
+
+            if sorted_head is None or current.data < sorted_head.data:
+                current.next = sorted_head
+                sorted_head = current
+            else:
+                temp = sorted_head
+                while temp.next and current.data > temp.next.data:
+                    temp = temp.next
+                current.next = temp.next
+                temp.next = current
+
+        self.head = sorted_head
+
+    def display(self):
         current = self.head
         while current:
-            print(current.data)
+            print(current.data, end=" ")
             current = current.next
+        print()
+
+
+def reverse_list(llist):
+    current_node = llist.head.next
+    llist.head.next = None
+    prev_node = llist.head
+    while current_node:
+        next_node = current_node.next
+        current_node.next = prev_node
+        prev_node = current_node
+        current_node = next_node
+    llist.head = prev_node
+
+
+def merge_sorted_lists(list1, list2):
+    merged_list = LinkedList()
+    list1.insertion_sort()
+    list2.insertion_sort()
+    current1 = list1.head
+    current2 = list2.head
+
+    while current1 and current2:
+        if current1.data <= current2.data:
+            merged_list.insert_at_end(current1.data)
+            current1 = current1.next
+        else:
+            merged_list.insert_at_end(current2.data)
+            current2 = current2.next
+
+    while current1:
+        merged_list.insert_at_end(current1.data)
+        current1 = current1.next
+
+    while current2:
+        merged_list.insert_at_end(current2.data)
+        current2 = current2.next
+
+    return merged_list
 
 
 if __name__ == "__main__":
     llist = LinkedList()
 
-    # Вставляємо вузли в початок
     llist.insert_at_beginning(5)
     llist.insert_at_beginning(10)
     llist.insert_at_beginning(15)
-    # Вставляємо вузли в кінець
     llist.insert_at_end(20)
     llist.insert_at_end(25)
 
-    # Друк зв'язного списку
-    print("Зв'язний список:")
-    llist.print_list()
-
-    # Видаляємо вузол
-    # llist.delete_node(10)
-
-    def reverse_list(llist):
-        current_node = llist.head.next
-        llist.head.next = None
-        prev_node = llist.head
-        while current_node:
-            next_node = current_node.next
-            current_node.next = prev_node
-            prev_node = current_node
-            current_node = next_node
-        llist.head = prev_node
+    llist.display()
+    llist.insertion_sort()
+    llist.display()
 
     reverse_list(llist)
     print("reverse linked list")
-    llist.print_list()
+    llist.display()
 
-    def insert_sort(list_data):
-        """сортує отриманий список методом вставки"""
-        for i in range(1, len(list_data)):
-            key = list_data[i]
-            j = i - 1
-            while j >= 0 and key < list_data[j]:
-                list_data[j + 1] = list_data[j]
-                j -= 1
-            list_data[j + 1] = key
-        return list_data
+    llist2 = LinkedList()
 
-    def get_llist_data(llist):
-        """отримує значення всіз елементів звязного списку"""
-        curr_node = llist.head
-        llist_data = []
-        while curr_node:
-            llist_data.append(curr_node.data)
-            curr_node = curr_node.next
-        return llist_data
-
-    def list_sorting(llist):
-        """вивантажує зі списку всі значення, сортує їх і вставляє у той самий список, замінючи тільки значення у вузлах, зберігаючи порядок"""
-        llist_data = get_llist_data(llist)
-        for i in range(1, len(llist_data)):
-            key = llist_data[i]
-            j = i - 1
-            while j >= 0 and key < llist_data[j]:
-                llist_data[j + 1] = llist_data[j]
-                j -= 1
-            llist_data[j + 1] = key
-        counter = 0
-        llist.head.data = llist_data[counter]
-        next_node = llist.head.next
-        while next_node:
-            counter += 1
-            next_node.data = llist_data[counter]
-            next_node = next_node.next
-
-    list_sorting(llist)
-    print("Sorted (insert method)")
-    llist.print_list()
-
-    llist_2 = LinkedList()
-
-    # Вставляємо вузли в початок
-    llist_2.insert_at_beginning(4)
-    llist_2.insert_at_beginning(11)
-    llist_2.insert_at_beginning(13)
-    llist_2.insert_at_end(21)
-    llist_2.insert_at_end(23)
-
-    # Друк зв'язного списку
-    print("Зв'язний список:")
-    llist_2.print_list()
-    list_sorting(llist_2)
-    print("second list sorted")
-    llist_2.print_list()
-
-    def llist_merge(llist, llist2):
-        """бере всі дані з двох списків, обєднює і сортує їх, створю новий звязний список, наповнює відсортованими даними новий список"""
-        llist_data = get_llist_data(llist)
-        llist2_data = get_llist_data(llist2)
-        llist_data.extend(llist2_data)
-        sorted_llist_data = insert_sort(llist_data)
-        merged_llist = LinkedList()
-        for i in sorted_llist_data:
-            merged_llist.insert_at_end(i)
-        return merged_llist
-
-    merget_list = llist_merge(llist, llist_2)
-    print("Merged sorted list")
-    merget_list.print_list()
+    llist2.insert_at_beginning(6)
+    llist2.insert_at_beginning(11)
+    llist2.insert_at_beginning(16)
+    llist2.insert_at_end(21)
+    llist2.insert_at_end(26)
+    merged_list = merge_sorted_lists(llist, llist2)
+    merged_list.display()
